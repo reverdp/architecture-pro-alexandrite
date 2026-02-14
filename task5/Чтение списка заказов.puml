@@ -1,0 +1,30 @@
+@startuml
+!theme C4_united from https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/themes
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Sequence.puml
+
+Person(Operator, "Operator")
+System(MES_UI, "MES UI")
+System(MES_API, "MES API")
+System(Redis, "Redis")
+System(MES_DB, "MES DB")
+
+activate Operator
+
+Rel(Operator, MES_UI, "Открывает список заказов")
+Rel(MES_UI, MES_API, "Запрос списка заказов")
+
+Rel(MES_API, Redis, "Запрос данных в кэше")
+Rel(Redis, MES_API, "Результат")
+
+alt Есть данные в кэше
+    Rel(MES_API, MES_UI, "Возврат списка заказов")
+    Rel(MES_UI, Operator, "Отображение списка заказов")
+else Нет данных в кэше
+    Rel(MES_API, MES_DB, "Запрос списка заказов в БД")
+    Rel(MES_DB, MES_API, "Список заказов")
+    Rel(MES_API, Redis, "Сохранение данных в кэше")
+    Rel(MES_API, MES_UI, "Возврат списка заказов")
+    Rel(MES_UI, Operator, "Отображение списка заказов")
+end
+
+@enduml

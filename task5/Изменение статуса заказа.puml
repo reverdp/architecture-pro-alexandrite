@@ -1,0 +1,22 @@
+@startuml
+!theme C4_united from https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/themes
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Sequence.puml
+
+Person(Operator, "Operator")
+System(MES_UI, "MES UI")
+System(MES_API, "MES API")
+System(Redis, "Redis")
+System(MES_DB, "MES DB")
+
+activate Operator
+
+Rel(Operator, MES_UI, "Изменяет статус заказа")
+Rel(MES_UI, MES_API, "Запрос на изменение статуса заказа")
+
+Rel(MES_API, MES_DB, "Изменение статуса заказа")
+Rel(MES_DB, MES_API, "Успешная операция")
+Rel(MES_API, Redis, "Инвалидация данных в кэше")
+Rel(MES_API, MES_UI, "Успешная операция")
+Rel(MES_UI, Operator, "Отображение результата операции")
+
+@enduml
