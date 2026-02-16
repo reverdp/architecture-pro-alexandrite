@@ -13,10 +13,17 @@ activate Operator
 Rel(Operator, MES_UI, "Изменяет статус заказа")
 Rel(MES_UI, MES_API, "Запрос на изменение статуса заказа")
 
+Rel(MES_API, MES_DB, "Старт транзакции")
 Rel(MES_API, MES_DB, "Изменение статуса заказа")
+Rel(MES_API, MES_DB, "Запись события в outbox (cache_invalidation)")
+Rel(MES_API, MES_DB, "Коммит транзакции")
 Rel(MES_DB, MES_API, "Успешная операция")
-Rel(MES_API, Redis, "Инвалидация данных в кэше")
 Rel(MES_API, MES_UI, "Успешная операция")
 Rel(MES_UI, Operator, "Отображение результата операции")
-
+... Cache Invalidation Worker ...
+loop
+Rel(MES_API, MES_DB, "Чтение события из outbox (cache_invalidation)")
+Rel(MES_DB, MES_API, "Найдено событие")
+Rel(MES_API, Redis, "Инвалидация данных в кэше")
+end
 @enduml
